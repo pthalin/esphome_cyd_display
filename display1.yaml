@@ -1,0 +1,249 @@
+esphome:
+  name: display1
+  friendly_name: display1
+
+esp32:
+  board: nodemcu-32s
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  encryption:
+    key: !secret encryption_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Display1 Fallback Hotspot"
+    password: !secret ap_password
+
+captive_portal:
+
+sensor:
+  - platform: homeassistant
+    entity_id: sensor.nordpool_kwh_se3_sek_3_10_025
+    id: price_sensor
+    internal: true
+  - platform: homeassistant
+    entity_id: sensor.power_meter_momentary_active_import
+    id: usage_sensor
+    internal: true
+  - platform: homeassistant
+    entity_id: sensor.ute_temperatur
+    id: outdoor_t
+    internal: true
+
+globals:
+  - id: show_power
+    type: bool
+    restore_value: no
+    initial_value: 'false'
+  - id: display_timer
+    type: uint32_t
+    restore_value: no
+    initial_value: '0'
+
+time:
+  - platform: homeassistant
+    id: esptime
+
+spi:
+- id: "disp"
+  clk_pin: 
+    number: GPIO14
+  mosi_pin: 
+    number: GPIO13
+  miso_pin: 
+    number: GPIO12
+    ignore_strapping_warning: True
+  
+- id: "touch"
+  clk_pin: 
+    number: GPIO25
+  mosi_pin: 
+    number: GPIO32
+  miso_pin: 
+    number: GPIO39
+
+touchscreen:
+  - platform: xpt2046
+    spi_id: "touch"
+    cs_pin: 
+      number: 33
+    id: my_touchscreen
+    update_interval: 10ms
+    threshold: 400
+    calibration: 
+      x_min: 340
+      x_max: 3840
+      y_min: 210
+      y_max: 3670
+    transform:
+      swap_xy: False
+      mirror_x: True
+      mirror_y: False
+    on_touch:
+        - lambda: |-
+              id(show_power) = true;
+              id(display_timer) = id(esptime).now().timestamp + 5;
+output:
+  - platform: ledc
+    pin: 21
+    id: gpio_21_backlight_pwm
+  - platform: ledc
+    pin: 17
+    id: gpio_17_pwm
+  - platform: ledc
+    pin: 16
+    id: gpio_16_pwm
+  - platform: ledc
+    pin: 4
+    id: gpio_4_pwm    
+
+light:
+  - platform: monochromatic
+    output: gpio_21_backlight_pwm
+    name: "Display Backlight"
+    id: back_light
+    restore_mode: ALWAYS_ON
+  - platform: monochromatic
+    output: gpio_17_pwm
+    name: "RGB1"
+    id: rgb1
+    restore_mode: ALWAYS_ON
+  - platform: monochromatic
+    output: gpio_16_pwm
+    name: "RGB2"
+    id: rgb2
+    restore_mode: ALWAYS_ON
+  - platform: monochromatic
+    output: gpio_4_pwm
+    name: "RGB3"
+    id: rgb3
+    restore_mode: ALWAYS_ON
+
+color:
+  - id: my_text_color
+    red: 100%
+    green: 100%
+    blue: 100%
+  - id: my_plot_color
+    red: 53%
+    green: 81%
+    blue: 98%
+
+font:
+  - file: "helvetica.ttf"
+    id: helvetica_text
+    size: 80
+  - file: "helvetica.ttf"
+    id: helvetica_unit
+    size: 28
+  - file: "helvetica.ttf"
+    id: helvetica_scale
+    size: 14
+
+image:
+  - file: mdi:transmission-tower
+    id: eletricity
+    resize: 30x30
+    type: binary
+  - file: mdi:home-lightning-bolt
+    id: eletricity_useage
+    resize: 30x30
+    type: binary
+  - file: mdi:home-thermometer-outline
+    id: outdoor_temp
+    resize: 30x30
+    type: binary
+
+graph:
+  - id: temperature_graph
+    # 24 Hour history
+    duration: 24h
+    x_grid: 4h
+    # Set shorter time for quick test
+    # x_grid: 4min
+    # duration: 24min
+    width: 295
+    height: 166
+
+    y_grid: 10
+    max_value: 30
+    min_value: -30
+    traces:
+      - sensor: outdoor_t
+        name: "Ute"
+        line_type: SOLID
+        color: my_plot_color
+
+display:
+  - platform: ili9xxx
+    dimensions:
+      height: 240
+      width: 320
+    invert_colors: False
+    spi_id: "disp"
+    model: ILI9341
+    cs_pin:
+      number: GPIO15
+      ignore_strapping_warning: True
+    dc_pin: 
+      number: GPIO2
+      ignore_strapping_warning: True
+    update_interval: 0.5s
+    color_palette: 8BIT
+    auto_clear_enabled: True
+    transform: 
+      mirror_x: False
+      mirror_y: False
+      swap_xy: True
+    lambda: |-
+      auto font = id(helvetica_text);
+      auto font_unit = id(helvetica_unit);
+      auto font_scale = id(helvetica_scale);
+      auto black = Color(0, 0, 0);
+      auto white = Color(255, 255, 255);
+      auto line_space = 74;
+      auto line1 = 0;
+      auto line2 = line1 + line_space;
+      auto line3 = line2 + line_space;
+      auto icon_offset = 2;
+      auto unit_offset = 38;
+      auto col1 =  0;
+      auto col2  = 45;
+      auto col_graph  = 24;
+
+      if (id(esptime).now().timestamp >= id(display_timer)) {
+        id(show_power) = false;
+      }
+
+      it.image( col1, line1 + icon_offset, id(outdoor_temp));
+      it.printf(col1, line1 + unit_offset, font_unit, Color(id(my_text_color)), TextAlign::LEFT, "°C");
+      it.printf(col2, line1, font, Color(id(my_text_color)), TextAlign::LEFT, "%.1f", id(outdoor_t).state);
+
+      if (id(show_power)) {
+          it.image( col1, line2 + icon_offset, id(eletricity));
+          it.printf(col1, line2 + unit_offset, font_unit, Color(id(my_text_color)), TextAlign::LEFT, "Kr");
+          it.printf(col2, line2, font, Color(id(my_text_color)), TextAlign::LEFT, "%.2f", id(price_sensor).state);
+
+          it.image( col1, line3 + icon_offset, id(eletricity_useage));
+          it.printf(col1, line3 + unit_offset, font_unit, Color(id(my_text_color)), TextAlign::LEFT, "W");
+          it.printf(col2, line3, font, Color(id(my_text_color)), TextAlign::LEFT, "%.0f", 1000*id(usage_sensor).state);
+      } else {
+        it.graph(col_graph, line2, id(temperature_graph));
+        it.printf(col_graph-1, line2, font_scale, Color(id(my_text_color)), TextAlign::RIGHT, "+30");
+        it.printf(col_graph-1, line2 + 83 - 7, font_scale, Color(id(my_text_color)), TextAlign::RIGHT, "0");
+        it.printf(col_graph-1, line2 + 166 - 14, font_scale, Color(id(my_text_color)), TextAlign::RIGHT, "-30");
+      }

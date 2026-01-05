@@ -1,0 +1,2 @@
+Based on files from:
+https://github.com/witnessmenow/ESP32-Cheap-Yellow-Display/tree/main/3dModels/Mechaelas_CYD_Snap_Case
