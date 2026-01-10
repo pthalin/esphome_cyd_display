@@ -29,7 +29,8 @@ template:
 
 ### Parts
 Use this arfilliate link to support me!\
-[ESP32-2432S028R aka ESP CYD ](https://s.click.aliexpress.com/e/_c3YeJZvD)
+[ESP32-2432S028R aka ESP CYD ](https://s.click.aliexpress.com/e/_c3LTtMYf)
+
 
 ### 3D Printed Case for CYD
 Files:\
