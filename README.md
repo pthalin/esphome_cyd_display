@@ -1,7 +1,7 @@
 # Esphome CYD Display
 In the file [display1.yaml](display1.yaml) is the Esphome yaml code for a display I use with Home Assistant. It displays outdoor temperature with a graph and by touching the display is will show electricty price and consumtion for 5 seconds.
-<img height="300" src="images/temperature_graph.jpg">
-<img height="300" src="images/electricity.jpg">
+
+<img height="300" src="images/temperature_graph.jpg"><img height="300" src="images/electricity.jpg">
 
 A new sensor that collects history data as an attribute is need in Home Assistan for the temerature history graph. Replace YOUR_SENSOR with you sensor name. After adding this to your configuration.yaml you need to wait 24h for the data to collected for the fist time.
 
