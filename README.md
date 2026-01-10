@@ -1,7 +1,8 @@
 # Esphome CYD Display
 This is the Esphome yaml code for a display I use with Home Assistant. It displays outdoor temperature with a graph and by touching the display is will show electricty price and consumtion for 5 seconds.
 
-<img height="300" src="images/temperature_graph.jpg"><img height="300" src="images/electricity.jpg">
+<img src="images/temperature_graph.jpg">\
+<img src="images/electricity.jpg">
 
 ### Parts
 Use this arfilliate link to support me!\
@@ -9,7 +10,7 @@ Use this arfilliate link to support me!\
 
 ### 3D Printed Case for CYD
 Files:\
-[TOP](./case/CYD_Case_Top.stl)\
+[Top](./case/CYD_Case_Top.stl)\
 [Bottom](./case/CYD_Case_Bottom.stl)
 
 If you have a printer without a heated bed it will likely wrap and the corners will lift and detach from the bed. This can be prevent by adding a Brim.\

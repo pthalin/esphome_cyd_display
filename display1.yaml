@@ -40,6 +40,7 @@ sensor:
     id: usage_sensor
     internal: true
   - platform: homeassistant
+    force_update: True
     entity_id: sensor.ute_temperatur
     id: outdoor_t
     internal: true
@@ -174,8 +175,8 @@ graph:
     duration: 24h
     x_grid: 4h
     # Set shorter time for quick test
-    # x_grid: 4min
-    # duration: 24min
+    # x_grid: 1min
+    # duration: 6min
     width: 295
     height: 166
 
