@@ -266,13 +266,13 @@ display:
       auto black = Color(0, 0, 0);
       auto white = Color(255, 255, 255);
       auto line_space = 74;
-      auto line1 = 0;
+      auto line1 = -6;
       auto line2 = line1 + line_space;
       auto line3 = line2 + line_space;
 
-      auto icon_offset = 2;
+      auto icon_offset = 6;
       auto unit_offset = 36;
-      auto col1 =  0;
+      auto col1 =  6;
       auto col2  = 45;
 
       auto line_graph = 73;
@@ -287,7 +287,7 @@ display:
 
       it.image( col1, line1 + icon_offset, id(outdoor_temp));
       it.printf(col1, line1 + unit_offset, font_unit, Color(id(my_text_color)), TextAlign::LEFT, "°C");
-      it.printf(col2, line1, font, Color(id(my_text_color)), TextAlign::LEFT, "%.1f", id(outdoor_t).state);
+      it.printf(col2, line1, font, Color(id(my_text_color)), TextAlign::TOP_LEFT, "%.1f", id(outdoor_t).state);
 
       if (id(show_power)) {
           it.image( col1, line2 + icon_offset, id(eletricity));
@@ -330,6 +330,8 @@ display:
           int line_pos = col_graph + (i + 1) * (graph_width/verticle_lines);
           it.line(line_pos, line_graph, line_pos, line_graph + graph_hight, white);
         }
+        it.printf(col_graph + 3 * (graph_width/verticle_lines), line_graph-14, font_scale, Color(id(my_text_color)), TextAlign::LEFT, "-12h");
+        it.printf(col_graph + 0 * (graph_width/verticle_lines), line_graph-14, font_scale, Color(id(my_text_color)), TextAlign::LEFT, "-24h");
 
         for (int i = 0; i < graph_width - 1 ; i++) {
           if (id(show_power))
