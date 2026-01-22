@@ -27,7 +27,7 @@ template:
             {{ updated_list[-288:] }}
 ```
 
-### Parts
+### Parts (AliExpress)
 Use this arfilliate link to support me!\
 [ESP32-2432S028R aka ESP CYD ](https://s.click.aliexpress.com/e/_c3LTtMYf)
 
@@ -41,3 +41,4 @@ If you have a printer without a heated bed it will likely wrap and the corners w
 <img height="300" src="images/3d_print_brim.png"> 
 
 
+Donation using [Ko-Fi](https://ko-fi.com/patriksretrotech) or [PayPal](https://www.paypal.com/donate/?business=UCTJFD6L7UYFL&no_recurring=0&item_name=Please+support+me%21&currency_code=SEK) are highly appreciated!
